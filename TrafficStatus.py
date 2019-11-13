@@ -1,15 +1,21 @@
 
 import requests
 import json
-import time
+import time,random
 from pandas import DataFrame
 import psycopg2
-
+from mutIP import ip_list
 #请求高德实时路况数据
 def getGaodeTrafficStatus(key,rectangle,currentTime):
     insert_list = []
-    TrafficStatusUrl = 'http://restapi.amap.com/v3/traffic/status/rectangle?key='+key+'&rectangle='+rectangle+'&extensions=all';
+    # 请求整个深汕的区域
+    # rectangle = '115.047594,22.8061120;115.113856,22.8042130000';
+    TrafficStatusUrl = 'http://restapi.amap.com/v3/traffic/status/rectangle?key='+key+'&rectangle='+rectangle+'&extensions=all'+'&level=6'; #
+    headers = { 'Referer': 'http://lbs.amap.com/console/show/picker',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'}
+    proxy = random.choice(ip_list)
     res = requests.get(url=TrafficStatusUrl).content;
+    # res = requests.get(url=TrafficStatusUrl, headers=headers, proxies=proxy).content;
     total_json = json.loads(res);
     print(total_json);
     trafficinfo=total_json.get('trafficinfo');
@@ -33,7 +39,7 @@ def getGaodeTrafficStatus(key,rectangle,currentTime):
                 polyline = i['polyline']
                 list = [name, status, direction, angle, lcodes, polyline, currentDate, currentTime, speed];
                 insert_list.append(list);
-            conn = psycopg2.connect(database="superpower", user="postgres", password="123456", host="localhost",
+            conn = psycopg2.connect(database="superpower", user="postgres", password="123", host="localhost",
                                     port="5432");
             cur = conn.cursor();
             for i in insert_list:
@@ -54,8 +60,10 @@ rectangleList=[];
 
 key='c29be2081e00e4714273b6b49b398692';
     #'c29be2081e00e4714273b6b49b398692';
-rectangle='120.12924,30.30185;120.16018,30.27150';
 #请求整个杭州的区域
+rectangle='120.12924,30.30185;120.16018,30.27150';
+#请求整个深汕的区域
+rectangle='115.047594,22.8061120;115.113856,22.8042130000';
 
 
 # #获取覆盖研究区域的网格
@@ -67,9 +75,10 @@ rectangle='120.12924,30.30185;120.16018,30.27150';
 # getGaodeTrafficStatus(key,rectangle);
 
 def getAllRegionGaodeData():
-    conn = psycopg2.connect(database="superpower", user="postgres", password="123456", host="localhost", port="5432");
+    conn = psycopg2.connect(database="superpower", user="postgres", password="123", host="localhost", port="5432");
     cur = conn.cursor();
-    cur.execute("select t.__xmin||','||t.ymin||';'||t.__xmax||','||t.ymax rectangle from hangzhou_grid t");
+    # cur.execute("select t.__xmin||','||t.ymin||';'||t.__xmax||','||t.ymax rectangle from hangzhou_grid t");
+    cur.execute("select t.__xmin||','||t.ymin||';'||t.__xmax||','||t.ymax rectangle from shenshan_gridprj48 t");
     rectangleData=cur.fetchall();
     cur.close;
     conn.close();
@@ -87,7 +96,7 @@ def getAllRegionGaodeData():
 
 def getOneKey():
     currentDate = time.strftime("%Y-%m-%d", time.localtime());
-    conn = psycopg2.connect(database="superpower", user="postgres", password="123456", host="localhost", port="5432");
+    conn = psycopg2.connect(database="superpower", user="postgres", password="123", host="localhost", port="5432");
     cur = conn.cursor();
     cur.execute("select KJ.key from (SELECT k.key, COALESCE((select j.request_count from gaode_keys j where j.date='" + currentDate + "' and j.key=k.key),0) request_count from (SELECT t.key from gaode_keys t GROUP BY t.key)  K) KJ  where KJ.request_count<1000");
     keyData = cur.fetchall();
@@ -100,7 +109,7 @@ def getOneKey():
 
 def afterRequest(key):
     currentDate = time.strftime("%Y-%m-%d", time.localtime());
-    conn = psycopg2.connect(database="superpower", user="postgres", password="123456", host="localhost", port="5432");
+    conn = psycopg2.connect(database="superpower", user="postgres", password="123", host="localhost", port="5432");
     cur = conn.cursor();
     cur.execute("SELECT count(*) from gaode_keys t where t.key='"+key+"' and t.date='"+currentDate+"'");
     keyData = cur.fetchall();
@@ -121,7 +130,7 @@ def timedTask(interval):
         time.sleep(interval);
 
 
-timedTask(60*5);
+timedTask(60);
 
 
 

@@ -83,7 +83,7 @@ def requestGaodeTrafficDate(conn, cur, key, currentDate, rec, currentTime):
 def batchGetTrafficStatus():
     # insertSql="";
     currentDate = time.strftime("%Y-%m-%d", time.localtime());
-    conn = psycopg2.connect(database="superpower", user="postgres", password="123456", host="localhost", port="5432");
+    conn = psycopg2.connect(database="superpower", user="postgres", password="123", host="localhost", port="5432");
     cur = conn.cursor();
     rectangleData = getRegionRectangles(conn, cur);
     currentTime = time.strftime("%H:%M:%S", time.localtime());

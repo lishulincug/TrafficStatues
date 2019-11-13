@@ -20,6 +20,8 @@ INCREMENT BY 1
 NO MINVALUE
 NO MAXVALUE
 CACHE 1;
+
+create extension postgis;
 -- ----------------------------
 -- Table structure for gaode_date
 -- ----------------------------

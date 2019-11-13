@@ -46,6 +46,7 @@ INSERT INTO "public"."gaode_keys" VALUES ('62f8056fccfbed20f5ba53ed210723be', '2
 INSERT INTO "public"."gaode_keys" VALUES ('0c15e7b6d463716fb9284d3238199466', '2017-10-25', '0', '5');
 INSERT INTO "public"."gaode_keys" VALUES ('911f1e0af83c79bcf9cf35771cda966f', '2017-10-26', '0', '6');
 INSERT INTO "public"."gaode_keys" VALUES ('a5e9cfffb5d9a00c14142cdc17742a8d', '2017-10-26', '60', '9');
+INSERT INTO "public"."gaode_keys" VALUES ('da895e592af18081f467b77fbd6463ad', '2017-10-26', '10', '15');
 
 -- ----------------------------
 -- Alter Sequences Owned By 
