@@ -112,7 +112,7 @@ $example_table$ LANGUAGE plpgsql;
 CREATE TRIGGER BeforeInsertInsertGaodeData_trigger Before INSERT  ON gaode_date FOR EACH ROW EXECUTE PROCEDURE BeforeInsertGaodeData ();
 ```
 
-
+ 
 - **数据查看，可视化获取的高德数据，如下（未正儿八经的进行渲染：）**
 ![image](http://note.youdao.com/yws/public/resource/9461424f32755baa75fe045abe52c653/xmlnote/2F1E73B0548744C0AFB78743F6764B81/48612)
 
